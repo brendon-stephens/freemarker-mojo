@@ -78,16 +78,20 @@ public class FreeMarkerMojo extends AbstractMojo {
 		try {
 			configuration.setTemplateLoader(new FileTemplateLoader(srcDir));
 		} catch (IOException e) {
-			throw new MojoFailureException("Error reading source folder '" + srcDir.getAbsolutePath() + 
-					"'. Verify plugin configuration. \n\n" + e.getMessage());
+			throw new MojoFailureException(String.format("Error reading source folder '%s'", srcDir.getAbsolutePath()), e);
 		}
 
 		HashMap<String, Object> input = new HashMap<String, Object>();
 
 		if(dataModels != null) {
 			for(String key : dataModels.keySet()) {
-				final File model = ResourceUtils.getProjectResource(srcDir.getAbsolutePath(), dataModels.get(key));
-				input.put(key, ResourceUtils.readAllFileBytes(model));
+				final File model = new File(srcDir.getAbsolutePath(), dataModels.get(key));
+				try {
+					input.put(key, ResourceUtils.readAllFileBytes(model));
+				} catch (Exception e) {
+					throw new MojoFailureException(String.format("There was an error loading the file '%s'"), e);
+
+				}
 			}
 		}
 
@@ -101,7 +105,7 @@ public class FreeMarkerMojo extends AbstractMojo {
 			Template template = configuration.getTemplate(templateName);
 			template.process(input, new FileWriter(outputFile));
 		} catch (TemplateException | IOException e) {
-			throw new MojoFailureException("Error processing the template '" + templateName + "'\n\n" + e.getMessage());
+			throw new MojoFailureException(String.format("There was an error processing the template file '%s'"), e);
 		}
 	}
 }

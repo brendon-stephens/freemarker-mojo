@@ -64,6 +64,30 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>${project.artifactId}</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<id>test-freemarker-template</id>
+						<phase>test</phase>
+						<goals>
+							<goal>apply-freemarker-template</goal>
+						</goals>
+						<configuration>
+							<srcDir>${project.build.directory}/test-classes</srcDir>
+							<outputFile>${project.build.directory}/test-classes/output.json</outputFile>
+							<template>example.ftl</template>
+							<dataModels>
+								<config>config.json</config>
+							</dataModels>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 </project>
